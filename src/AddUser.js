@@ -1,48 +1,44 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-class AddUser extends Component {
+class AddUser extends React.Component {
   state = {
     user: {
       firstName: '',
       lastName: '',
-      username: '',
+      username: ''
     },
-    userExists: false,
+    userExists: false
   };
 
-  contactExists = currUsername => {
-    const users = this.props.users;
+  contactExists = currentUsername => {
+    const { users } = this.props;
     for (let user of users) {
-      if (user.username === currUsername) {
+      if (user.username === currentUsername)
         return true;
-      }
+      return false;
     }
-    return false;
   };
 
   handleSubmit = event => {
     event.preventDefault();
-    const userExists = this.contactExists(this.state.user.username);
-
-    if (!userExists) {
-      this.props.onAddUser(this.state.user);
-    }
-
-    this.setState(() => ({
-      userExists,
-    }));
+    
+    const { user } = this.state;
+    const userExists = this.contactExists(user.username);
+    
+    if (!userExists) this.props.onAddUser(user);
+    this.setState({ userExists });
   };
 
   handleInputChange = event => {
     const { name, value } = event.target;
-
-    this.setState(currState => ({
-      ...currState,
+    
+    this.setState(currentState => ({
+      ...currentState,
       user: {
-        ...currState.user,
-        [name]: value,
-      },
+        ...currentState.user,
+        [name]: value
+      } 
     }));
   };
 
@@ -53,23 +49,21 @@ class AddUser extends Component {
 
   render() {
     const { firstName, lastName, username } = this.state.user;
-
     return (
       <div>
-        <h1>New User</h1>
         <form onSubmit={this.handleSubmit}>
           <div>
             <input
               type="text"
               name="firstName"
-              placeholder="Enter First Name"
+              placeholder="Enter first name"
               value={firstName}
               onChange={this.handleInputChange}
             />
             <input
               type="text"
               name="lastName"
-              placeholder="Enter Last Name"
+              placeholder="Enter last name"
               value={lastName}
               onChange={this.handleInputChange}
             />
@@ -83,19 +77,18 @@ class AddUser extends Component {
           </div>
           <button disabled={this.isDisabled()}>Add</button>
         </form>
-        {this.state.userExists ? (
-          <p className="error">You cannot add a user that already exists.</p>
-        ) : (
-          ''
-        )}
+        { this.state.userExists ? (
+           <p className="error">You cannot add a user that already exists.</p>
+        ) : ''}
       </div>
-    );
+    ); 
   }
 }
 
 AddUser.propTypes = {
-  onAddUser: PropTypes.func.isRequired,
-  users: PropTypes.array.isRequired,
+  firstName: PropTypes.string.isRequired,
+  lastName: PropTypes.string.isRequired,
+  username: PropTypes.string.isRequired,
 };
 
 export default AddUser;
